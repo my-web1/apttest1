@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IICP Aptitude Test Portal</title>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.2/auth0-spa-js.production.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -162,6 +162,7 @@
             // Initialize Auth0 client
             async function initAuth0() {
                 try {
+                    console.log('Initializing Auth0 client...');
                     auth0Client = await auth0.createAuth0Client({
                         domain: config.auth0.domain,
                         clientId: config.auth0.clientId,
@@ -169,12 +170,25 @@
                             redirect_uri: window.location.origin
                         }
                     });
+                    console.log('Auth0 client initialized.');
+
+                    // Handle redirect callback
+                    if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
+                        console.log('Handling redirect callback...');
+                        await auth0Client.handleRedirectCallback();
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        console.log('Redirect callback handled.');
+                    }
 
                     const isAuthenticated = await auth0Client.isAuthenticated();
                     if (isAuthenticated) {
+                        console.log('User is authenticated.');
                         showTestSelection();
+                    } else {
+                        console.log('User is not authenticated.');
                     }
                 } catch (error) {
+                    console.error('Auth0 initialization error:', error);
                     showError('Failed to initialize authentication: ' + error.message);
                 }
             }
@@ -201,7 +215,18 @@
                     hideMessages();
                     showTestSelection();
                 } catch (error) {
-                    showError('Login failed: ' + error.message);
+                    if (error.message.includes('popup')) {
+                        showError('Popup blocked. Redirecting to login page...');
+                        await auth0Client.loginWithRedirect({
+                            authorizationParams: {
+                                connection: 'Username-Password-Authentication',
+                                email: email,
+                                password: password
+                            }
+                        });
+                    } else {
+                        showError('Login failed: ' + error.message);
+                    }
                 }
             }
 
