@@ -6,7 +6,6 @@
     <title>IICP Aptitude Test Portal</title>
     <!-- Load Auth0 SPA SDK dynamically -->
     <script>
-        // Function to dynamically load the Auth0 script and handle errors
         function loadAuth0Script() {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
@@ -126,7 +125,6 @@
 
     <script>
         (function () {
-            // Configuration with provided Auth0 details
             const config = {
                 auth0: {
                     domain: 'dev-vslt34gmd5k3fr81.us.auth0.com',
@@ -148,7 +146,6 @@
 
             let auth0Client = null;
 
-            // DOM elements
             const elements = {
                 loginSection: document.getElementById('login-section'),
                 testSelection: document.getElementById('test-selection'),
@@ -160,60 +157,47 @@
                 loadingMessage: document.getElementById('loading-message')
             };
 
-            // Show error message
             function showError(message) {
                 elements.errorMessage.textContent = message;
                 elements.errorMessage.style.display = 'block';
                 elements.loadingMessage.style.display = 'none';
             }
 
-            // Show loading message
             function showLoading() {
                 elements.errorMessage.style.display = 'none';
                 elements.loadingMessage.style.display = 'block';
             }
 
-            // Hide messages
             function hideMessages() {
                 elements.errorMessage.style.display = 'none';
                 elements.loadingMessage.style.display = 'none';
             }
 
-            // Initialize Auth0 client
             async function initAuth0() {
                 try {
-                    // Ensure the Auth0 script is loaded
                     await loadAuth0Script();
-
-                    // Verify that auth0 is defined
                     if (typeof auth0 === 'undefined') {
-                        throw new Error('Auth0 SDK is not defined. Please check the script source.');
+                        throw new Error('Auth0 SDK is not defined.');
                     }
 
-                    console.log('Initializing Auth0 client...');
                     auth0Client = await auth0.createAuth0Client({
                         domain: config.auth0.domain,
                         clientId: config.auth0.clientId,
                         authorizationParams: {
-                            redirect_uri: window.location.origin
+                            redirect_uri: window.location.origin,
+                            audience: `https://${config.auth0.domain}/api/v2/`,
+                            scope: 'openid profile email'
                         }
                     });
-                    console.log('Auth0 client initialized.');
 
-                    // Handle redirect callback
                     if (window.location.search.includes('code=') && window.location.search.includes('state=')) {
-                        console.log('Handling redirect callback...');
                         await auth0Client.handleRedirectCallback();
                         window.history.replaceState({}, document.title, window.location.pathname);
-                        console.log('Redirect callback handled.');
                     }
 
                     const isAuthenticated = await auth0Client.isAuthenticated();
                     if (isAuthenticated) {
-                        console.log('User is authenticated.');
                         showTestSelection();
-                    } else {
-                        console.log('User is not authenticated.');
                     }
                 } catch (error) {
                     console.error('Auth0 initialization error:', error);
@@ -221,7 +205,6 @@
                 }
             }
 
-            // Login function
             async function login() {
                 const email = elements.emailInput.value.trim();
                 const password = elements.passwordInput.value;
@@ -233,32 +216,19 @@
 
                 showLoading();
                 try {
-                    await auth0Client.loginWithPopup({
+                    await auth0Client.loginWithRedirect({
                         authorizationParams: {
                             connection: 'Username-Password-Authentication',
-                            email: email,
-                            password: password
+                            login_hint: email,
+                            redirect_uri: window.location.origin
                         }
                     });
-                    hideMessages();
-                    showTestSelection();
                 } catch (error) {
-                    if (error.message.includes('popup')) {
-                        showError('Popup blocked. Redirecting to login page...');
-                        await auth0Client.loginWithRedirect({
-                            authorizationParams: {
-                                connection: 'Username-Password-Authentication',
-                                email: email,
-                                password: password
-                            }
-                        });
-                    } else {
-                        showError('Login failed: ' + error.message);
-                    }
+                    console.error('Login error:', error);
+                    showError('Login failed: ' + error.message);
                 }
             }
 
-            // Logout function
             async function logout() {
                 try {
                     showLoading();
@@ -270,11 +240,11 @@
                     showLogin();
                     hideMessages();
                 } catch (error) {
+                    console.error('Logout error:', error);
                     showError('Logout failed: ' + error.message);
                 }
             }
 
-            // Start test function
             function startTest() {
                 const selectedTest = elements.testSelect.value;
                 if (selectedTest && config.testPages[selectedTest]) {
@@ -288,7 +258,6 @@
                 }
             }
 
-            // Show test selection section
             function showTestSelection() {
                 elements.loginSection.style.display = 'none';
                 elements.testSelection.style.display = 'block';
@@ -296,7 +265,6 @@
                 hideMessages();
             }
 
-            // Show login section
             function showLogin() {
                 elements.loginSection.style.display = 'block';
                 elements.testSelection.style.display = 'none';
@@ -304,7 +272,6 @@
                 hideMessages();
             }
 
-            // Initialize Auth0 on page load
             window.onload = initAuth0;
         })();
     </script>
