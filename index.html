@@ -90,7 +90,7 @@
     <div class="container" id="app">
         <div id="login-section">
             <h2>Institute Login</h2>
-            <button onclick="login()">Login with Auth0</button>
+            <button id="login-btn">Login with Auth0</button>
             <div id="error-message" class="error" style="display: none;"></div>
             <div id="loading-message" class="loading" style="display: none;">Loading...</div>
         </div>
@@ -110,8 +110,8 @@
                 <option value="test8">FullStack Test 3</option>
                 <option value="test9">FullStack Test 4</option>
             </select>
-            <button onclick="startTest()">Start Test</button>
-            <button id="logout-btn" onclick="logout()">Logout</button>
+            <button id="start-test-btn">Start Test</button>
+            <button id="logout-btn">Logout</button>
         </div>
     </div>
     <footer>
@@ -147,7 +147,9 @@
                 logoutBtn: document.getElementById('logout-btn'),
                 testSelect: document.getElementById('test-select'),
                 errorMessage: document.getElementById('error-message'),
-                loadingMessage: document.getElementById('loading-message')
+                loadingMessage: document.getElementById('loading-message'),
+                loginBtn: document.getElementById('login-btn'),
+                startTestBtn: document.getElementById('start-test-btn')
             };
 
             function showError(message) {
@@ -256,6 +258,11 @@
                 elements.logoutBtn.style.display = 'none';
                 hideMessages();
             }
+
+            // Attach event listeners
+            elements.loginBtn.addEventListener('click', login);
+            elements.startTestBtn.addEventListener('click', startTest);
+            elements.logoutBtn.addEventListener('click', logout);
 
             window.onload = initAuth0;
         })();
