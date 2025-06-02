@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IICP Aptitude Test Portal</title>
-    <!-- Load Auth0 SPA SDK with a fallback -->
+    <!-- Load Auth0 SPA SDK dynamically -->
     <script>
         // Function to dynamically load the Auth0 script and handle errors
         function loadAuth0Script() {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
-                script.src = 'https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js'; // Reverted to 2.1 as in original code
+                script.src = 'https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js';
                 script.async = true;
                 script.onload = () => {
                     console.log('Auth0 SDK loaded successfully.');
@@ -113,7 +113,7 @@
                 <option value="test5">Aptitude Test 5</option>
                 <option value="test6">FullStack Test 1</option>
                 <option value="test7">FullStack Test 2</option>
-                <option value="test8">FullStack Test 3</div>
+                <option value="test8">FullStack Test 3</option>
                 <option value="test9">FullStack Test 4</option>
             </select>
             <button onclick="startTest()">Start Test</button>
@@ -126,11 +126,12 @@
 
     <script>
         (function () {
-            // Configuration
+            // Configuration with provided Auth0 details
             const config = {
                 auth0: {
                     domain: 'dev-vslt34gmd5k3fr81.us.auth0.com',
-                    clientId: 'oPdvg8bwX3nudcSMGqJzPiF2aFprDbiu'
+                    clientId: 'oPdvg8bwX3nudcSMGqJzPiF2aFprDbiu',
+                    applicationName: 'IICPAPT'
                 },
                 testPages: {
                     test1: 'https://apt1.iicp.in/AptitudeTest1.html',
