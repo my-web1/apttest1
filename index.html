@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IICP Aptitude Test Portal</title>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.2/auth0-spa-js.production.js"></script>
+    <!-- Load Auth0 SPA SDK with a fallback -->
+    <script>
+        // Function to dynamically load the Auth0 script and handle errors
+        function loadAuth0Script() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js'; // Reverted to 2.1 as in original code
+                script.async = true;
+                script.onload = () => {
+                    console.log('Auth0 SDK loaded successfully.');
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error('Failed to load Auth0 SDK.');
+                    reject(new Error('Failed to load Auth0 SDK. Please check your network or CDN availability.'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -94,7 +113,7 @@
                 <option value="test5">Aptitude Test 5</option>
                 <option value="test6">FullStack Test 1</option>
                 <option value="test7">FullStack Test 2</option>
-                <option value="test8">FullStack Test 3</option>
+                <option value="test8">FullStack Test 3</div>
                 <option value="test9">FullStack Test 4</option>
             </select>
             <button onclick="startTest()">Start Test</button>
@@ -162,6 +181,14 @@
             // Initialize Auth0 client
             async function initAuth0() {
                 try {
+                    // Ensure the Auth0 script is loaded
+                    await loadAuth0Script();
+
+                    // Verify that auth0 is defined
+                    if (typeof auth0 === 'undefined') {
+                        throw new Error('Auth0 SDK is not defined. Please check the script source.');
+                    }
+
                     console.log('Initializing Auth0 client...');
                     auth0Client = await auth0.createAuth0Client({
                         domain: config.auth0.domain,
