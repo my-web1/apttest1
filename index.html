@@ -23,6 +23,9 @@
         }
     </script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -50,8 +53,8 @@
             padding: 10px;
             margin: 10px;
             font-size: 16px;
-            width: calc(100% - 22px);
-            box-sizing: border-box;
+            width: 100%;
+            cursor: pointer;
         }
         #login-section {
             margin-bottom: 20px;
@@ -78,6 +81,7 @@
             background: rgba(255, 255, 255, 0.8);
             padding: 5px 0;
         }
+        /* Adjust footer for smaller screens to avoid overlap */
         @media (max-height: 600px) {
             footer {
                 position: static;
@@ -90,7 +94,7 @@
     <div class="container" id="app">
         <div id="login-section">
             <h2>Institute Login</h2>
-            <button id="login-btn">Login with Auth0</button>
+            <button id="login-btn" type="button">Login with Auth0</button>
             <div id="error-message" class="error" style="display: none;"></div>
             <div id="loading-message" class="loading" style="display: none;">Loading...</div>
         </div>
@@ -111,12 +115,12 @@
                 <option value="test9">FullStack Test 4</option>
                 <option value="test10">Interview Techniques</option>
             </select>
-            <button id="start-test-btn">Start Test</button>
-            <button id="logout-btn">Logout</button>
+            <button id="start-test-btn" type="button">Start Test</button>
+            <button id="logout-btn" type="button">Logout</button>
         </div>
     </div>
     <footer>
-        © 2025 Dr. Sachin Ambekar's IICP - Industry Integrated Career Platform | <a href="http://www.iicp.in">www.iicp.in</a>
+        © 2025 Dr. Sachin Ambekar's IICP - Industry Integrated Career Platform | <a href="http://www.iicp.in" rel="noopener noreferrer">www.iicp.in</a>
     </footer>
 
     <script>
@@ -136,7 +140,7 @@
                     test6: 'https://apt1.iicp.in/FullStack1.html',
                     test7: 'https://apt1.iicp.in/FullStack2.html',
                     test8: 'https://apt1.iicp.in/FullStack3.html',
-                    test9: 'https://apt1.iicp.in/FullStack4.html'
+                    test9: 'https://apt1.iicp.in/FullStack4.html',
                     test10: 'https://apt1.iicp.in/int.html'
                 }
             };
